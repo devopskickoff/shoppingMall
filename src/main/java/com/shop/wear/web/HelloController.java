@@ -1,5 +1,6 @@
 package com.shop.wear.web;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shop.wear.constant.ItemSellStatus;
@@ -7,10 +8,14 @@ import com.shop.wear.entity.Item;
 import com.shop.wear.entity.QItem;
 import com.shop.wear.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.thymeleaf.util.StringUtils;
 
 import javax.persistence.EntityManager;
+import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,8 +30,6 @@ public class HelloController {
 
     @GetMapping("/hello")
     public String hello(){
-        createItemList();
-        queryDsl();
         return "hello";
     }
 
@@ -44,7 +47,30 @@ public class HelloController {
         }
     }
 
-    public void queryDsl(){
+    @GetMapping("/findByItemDetail")
+    public String findByItemDetail(){
+        this.createItemList();
+        List<Item> itemList = itemRepository.findByItemDetail("테스트 상품 상세 설명");
+        for(Item item : itemList){
+            System.out.println("findByItemDetail");
+            System.out.println(item.toString());
+        }
+        return "findByItemDetail";
+    }
+
+    @GetMapping("/findByItemDetailByNative")
+    public String findByItemDetailByNative(){
+        this.createItemList();
+        List<Item> itemList = itemRepository.findByItemDetailByNative("테스트 상품 상세 설명");
+        for(Item item : itemList){
+            System.out.println("findByItemDetailByNative");
+            System.out.println(item.toString());
+        }
+        return "findByItemDetailNative";
+    }
+
+    @GetMapping("/queryDsl1")
+    public String queryDsl1(){
         //this.createItemList();
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
         QItem qItem = QItem.item;
@@ -54,5 +80,31 @@ public class HelloController {
             System.out.println("테스트");
             System.out.println(item.toString());
         }
+        return "queryDsl1";
+    }
+
+    @GetMapping("/queryDsl2")
+    public String queryDsl2(){
+        this.createItemList();
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        QItem qitem = QItem.item;
+        String itemDetail = "테스트 상품 상세 설명";
+        int price = 10003;
+        String itemSellStat = "SELL";
+        booleanBuilder.and(qitem.itemDetail.like("%"+itemDetail+"%"));
+        booleanBuilder.and(qitem.price.gt(price));
+
+        if(StringUtils.equals(itemSellStat, ItemSellStatus.SELL)){
+            booleanBuilder.and(qitem.itemSellStatus.eq(ItemSellStatus.SELL));
+        }
+
+        PageRequest pageable = PageRequest.of(0,5);
+        Page<Item> itemPagingResult = itemRepository.findAll(booleanBuilder, pageable);
+        System.out.println("total elements :" + itemPagingResult.getTotalElements());
+        List<Item> resultItemList = itemPagingResult.getContent();
+        for(Item resultItem : resultItemList){
+            System.out.println(resultItem.toString());
+        }
+        return "queryDsl2";
     }
 }
