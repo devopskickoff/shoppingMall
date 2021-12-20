@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		queryDslVersion = "4.4.0"
+		queryDslVersion = "5.0.0"
 	}
 }
 
@@ -37,31 +37,29 @@ dependencies {
 
 
 
-	implementation 'com.querydsl:querydsl-jpa'
-	implementation 'com.querydsl:querydsl-apt'
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 }
 
 // QueryDSL
-def querydslSrcDir = "src/main/generated"
+def querydslDir = "$buildDir/generated/querydsl"
 
 querydsl {
-	library = "com.querydsl:querydsl-apt"
 	jpa = true
-	querydslSourcesDir = querydslSrcDir
+	querydslSourcesDir = querydslDir
 }
-
 sourceSets {
-	main.java.srcDirs = ['src/main/java', querydslSrcDir]
+	main.java.srcDir querydslDir
 }
-
 compileQuerydsl{
 	options.annotationProcessorPath = configurations.querydsl
 }
-
 configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
 	querydsl.extendsFrom compileClasspath
 }
-
 test {
 	useJUnitPlatform()
 }

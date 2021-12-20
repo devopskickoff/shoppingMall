@@ -25,7 +25,7 @@ public class HelloController {
 
     @GetMapping("/hello")
     public String hello(){
-        //createItemList();
+        createItemList();
         queryDsl();
         return "hello";
     }
@@ -41,7 +41,6 @@ public class HelloController {
             item.setRegTime(LocalDateTime.now());
             item.setUpdateTime(LocalDateTime.now());
             Item savedItem = itemRepository.save(item);
-            System.out.println(savedItem.toString());
         }
     }
 
@@ -49,14 +48,10 @@ public class HelloController {
         //this.createItemList();
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
         QItem qItem = QItem.item;
-        JPAQuery<Item> query = queryFactory.selectFrom(qItem)
-                .where(qItem.itemSellStatus.eq(ItemSellStatus.SELL))
-                .where(qItem.itemNm.like("%" + "테스트 상품 상세 설명"+"%"))
-                .orderBy(qItem.price.desc());
-
+        JPAQuery<Item> query = queryFactory.selectFrom(qItem);
         List<Item> itemList = query.fetch();
-
         for(Item item : itemList){
+            System.out.println("테스트");
             System.out.println(item.toString());
         }
     }
