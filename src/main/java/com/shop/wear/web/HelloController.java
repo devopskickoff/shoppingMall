@@ -4,12 +4,16 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shop.wear.constant.ItemSellStatus;
+import com.shop.wear.dto.MemberFormDto;
 import com.shop.wear.entity.Item;
+import com.shop.wear.entity.Member;
 import com.shop.wear.entity.QItem;
 import com.shop.wear.repository.ItemRepository;
+import com.shop.wear.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.thymeleaf.util.StringUtils;
@@ -27,6 +31,12 @@ public class HelloController {
 
     @Autowired
     EntityManager em;
+
+    @Autowired
+    MemberService memberService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @GetMapping("/hello")
     public String hello(){
@@ -105,6 +115,28 @@ public class HelloController {
         for(Item resultItem : resultItemList){
             System.out.println(resultItem.toString());
         }
+        return "queryDsl2";
+    }
+
+    public Member createMember(){
+        MemberFormDto memberFormDto = new MemberFormDto();
+        memberFormDto.setEmail("test@email.com");
+        memberFormDto.setName("홍길동");
+        memberFormDto.setAddress("서울시 마포구 합정동");
+        memberFormDto.setPassword("1234");
+        return Member.createMember(memberFormDto, passwordEncoder);
+    }
+
+    @GetMapping("/saveMemberTest")
+    public String saveMemberTest(){
+        Member member = createMember();
+        Member savedMember = memberService.saveMember(member);
+
+        System.out.println("member: "+member.getEmail() + "savedMember: " + savedMember.getEmail());
+        System.out.println("member: "+member.getName() + "savedMember: " + savedMember.getName());
+        System.out.println("member: "+member.getAddress() + "savedMember: " + savedMember.getAddress());
+        System.out.println("member: "+member.getPassword() + "savedMember: " + savedMember.getPassword());
+        System.out.println("member: "+member.getRole() + "savedMember: " + savedMember.getRole());
         return "queryDsl2";
     }
 }
