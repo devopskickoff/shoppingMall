@@ -42,6 +42,7 @@ dependencies {
 	implementation 'org.springframework.security:spring-security-test'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.6.2'
 	implementation group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity5', version: '3.0.4.RELEASE'
+	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.9'
 }
 
 // QueryDSL

@@ -6,7 +6,6 @@ import com.shop.wear.repository.ItemRepository;
 import com.shop.wear.repository.MemberRepository;
 import com.shop.wear.repository.OrderItemRepository;
 import com.shop.wear.repository.OrderRepository;
-import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.thymeleaf.util.StringUtils;
 
 import javax.persistence.EntityManager;
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 
